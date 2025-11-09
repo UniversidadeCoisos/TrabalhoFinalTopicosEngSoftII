@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS items (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price NUMERIC(12,2) DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);

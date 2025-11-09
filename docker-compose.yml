@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appdb
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+
+  app:
+    build: ./app
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appdb
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+  grafana:
+    image: grafana/grafana:9.5.0
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "admin"
+    volumes:
+      - ./grafana/provisioning/datasources/all.yml:/etc/grafana/provisioning/datasources/all.yml:ro
+      - ./grafana/provisioning/dashboards/all.yml:/etc/grafana/provisioning/dashboards/all.yml:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+      - db
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
