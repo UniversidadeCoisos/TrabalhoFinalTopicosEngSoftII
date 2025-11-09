@@ -174,14 +174,4 @@ docker compose down -v
 ```
 
 ---
-
-## 💡 Próximos Passos (opcionais)
-- Adicionar autenticação na API e no frontend.  
-- Incluir **Node Exporter** para monitorar CPU e memória do host.  
-- Criar novos painéis no Grafana com métricas personalizadas.  
-- Popular o banco com dados de exemplo automáticos.
-
----
-
-✍️ **Autor:** Ambiente de Observabilidade — Projeto Acadêmico  
 📅 **Data:** Novembro de 2025
